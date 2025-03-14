@@ -12,8 +12,9 @@ package models
 
 import "gorm.io/gorm"
 
+// User represents a user in the system with authentication details
 type User struct {
 	gorm.Model
-	Email    string `gorm:"unique"`
-	Password string
+	Email    string `json:"email" gorm:"unique"`
+	Password string `json:"password"`
 }

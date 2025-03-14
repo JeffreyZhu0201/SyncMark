@@ -2,7 +2,7 @@
  * @Author: Jeffrey Zhu 1624410543@qq.com
  * @Date: 2025-03-14 22:20:14
  * @LastEditors: Jeffrey Zhu 1624410543@qq.com
- * @LastEditTime: 2025-03-14 23:59:32
+ * @LastEditTime: 2025-03-15 00:48:39
  * @FilePath: \Smart-Snap-AI\Go-backend\main.go
  * @Description: File Description Here...
  *
@@ -36,6 +36,8 @@ func main() {
 	initDB()
 
 	r := gin.Default()
+
+	handlers.InitDB(db)
 
 	r.POST("/register", handlers.Register)
 	r.POST("/login", handlers.Login)

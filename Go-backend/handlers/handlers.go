@@ -2,7 +2,7 @@
  * @Author: Jeffrey Zhu 1624410543@qq.com
  * @Date: 2025-03-14 23:10:57
  * @LastEditors: Jeffrey Zhu 1624410543@qq.com
- * @LastEditTime: 2025-03-15 00:24:37
+ * @LastEditTime: 2025-03-15 00:29:00
  * @FilePath: \Smart-Snap-AI\Go-backend\handlers\handlers.go
  * @Description: File Description Here...
  *
@@ -12,6 +12,7 @@ package handlers
 
 import (
 	"Go-backend/models"
+	"fmt"
 	"net/http"
 
 	"Go-backend/middleware"
@@ -30,9 +31,15 @@ type Response struct {
 	Data    interface{} `json:"data,omitempty"`
 }
 
+// connect database
+func InitDB(database *gorm.DB) {
+	db = database
+}
+
 // Register handles user registration by creating a new user in the database
 func Register(c *gin.Context) {
 	var user models.User
+	fmt.Println(user)
 	// log.Fatalf("%s", user.Email)
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, Response{Code: 400, Message: "Invalid request"})
