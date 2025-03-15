@@ -11,14 +11,12 @@
 package handlers
 
 import (
-	"Go-backend/config"
 	"Go-backend/models"
 	"Go-backend/utils"
 	"net/http"
 
 	"Go-backend/middleware"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -84,20 +82,8 @@ func Login(c *gin.Context) {
 
 func GetUserInfo(c *gin.Context) {
 	var user models.User
-	claims := &middleware.Claims{}
-	_, err := jwt.ParseWithClaims(c.GetHeader("Authorization"), claims, func(token *jwt.Token) (interface{}, error) {
-		//if err
-		c.AbortWithStatusJSON(http.StatusUnauthorized, models.Response{Code: 401, Message: "Unauthorized"})
-		return config.JwtKey, nil
-	})
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, models.Response{Code: 401, Message: "Authorization header is err"})
-		return
-	}
-	// if err != nil || !token.Valid {
-	// 	c.JSON(http.StatusUnauthorized, models.Response{Code: 401, Message: "Unauthorized"})
-	// 	return
-	// }
+	_, claims, _ := middleware.ValidToken(c.GetHeader("Authorization"))
+
 	utils.DB.Where("id = ?", claims.UserID).First(&user)
 	c.JSON(http.StatusOK, models.Response{Code: 200, Message: "Success", Data: user})
 }

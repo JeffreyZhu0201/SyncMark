@@ -38,11 +38,18 @@ func GenerateJWT(user models.User) (string, error) {
 	return token.SignedString(config.JwtKey)
 }
 
-func JWTAuthMiddleware(c *gin.Context) {
+func ValidToken(tokenString string) (*jwt.Token, *Claims, error) {
 	claims := &Claims{}
-	token, err := jwt.ParseWithClaims(c.GetHeader("Authorization"), claims, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		return config.JwtKey, nil
 	})
+
+	return token, claims, err
+}
+
+func JWTAuthMiddleware(c *gin.Context) {
+
+	token, _, err := ValidToken(c.GetHeader("Authorization"))
 
 	if err != nil || !token.Valid {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, models.Response{Code: 401, Message: "Unauthorized"})
