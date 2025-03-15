@@ -2,7 +2,7 @@
  * @Author: Jeffrey Zhu 1624410543@qq.com
  * @Date: 2025-03-14 22:20:14
  * @LastEditors: Jeffrey Zhu 1624410543@qq.com
- * @LastEditTime: 2025-03-15 00:48:39
+ * @LastEditTime: 2025-03-15 19:01:34
  * @FilePath: \Smart-Snap-AI\Go-backend\main.go
  * @Description: File Description Here...
  *
@@ -12,33 +12,19 @@ package main
 
 import (
 	"Go-backend/handlers"
-	"Go-backend/models"
-	"log"
+	"Go-backend/utils"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
 )
 
-var db *gorm.DB
-
-func initDB() {
-	dsn := "root:qQ13527503399@tcp(127.0.0.1:3306)/smart-snap-ai?charset=utf8mb4&parseTime=True&loc=Local"
-	var err error
-	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		log.Fatalf("failed to connect database: %v", err)
-	}
-	db.AutoMigrate(&models.User{})
-}
-
 func main() {
-	initDB()
+	// 初始化数据库
+	utils.InitDB()
 
+	// 设置路由
 	r := gin.Default()
 
-	handlers.InitDB(db)
-
+	// 注册路由
 	r.POST("/register", handlers.Register)
 	r.POST("/login", handlers.Login)
 
@@ -48,5 +34,8 @@ func main() {
 		})
 	})
 
-	r.Run()
+	// 启动服务器
+	if err := r.Run(); err != nil {
+		panic(err)
+	}
 }
