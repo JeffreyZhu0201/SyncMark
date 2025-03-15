@@ -2,8 +2,8 @@
  * @Author: Jeffrey Zhu 1624410543@qq.com
  * @Date: 2025-03-14 23:10:57
  * @LastEditors: Jeffrey Zhu 1624410543@qq.com
- * @LastEditTime: 2025-03-15 19:24:53
- * @FilePath: \Smart-Snap-AI\Go-backend\handlers\handlers.go
+ * @LastEditTime: 2025-03-15 23:48:57
+ * @FilePath: \Smart-Snap-AI\Go-backend\handlers\UserHandlers.go
  * @Description: File Description Here...
  *
  * Copyright (c) 2025 by JeffreyZhu, All Rights Reserved.
@@ -11,12 +11,14 @@
 package handlers
 
 import (
+	"Go-backend/config"
 	"Go-backend/models"
 	"Go-backend/utils"
 	"net/http"
 
 	"Go-backend/middleware"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -78,4 +80,24 @@ func Login(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, models.Response{Code: 200, Message: "Login successful", Data: token})
+}
+
+func GetUserInfo(c *gin.Context) {
+	var user models.User
+	claims := &middleware.Claims{}
+	_, err := jwt.ParseWithClaims(c.GetHeader("Authorization"), claims, func(token *jwt.Token) (interface{}, error) {
+		//if err
+		c.AbortWithStatusJSON(http.StatusUnauthorized, models.Response{Code: 401, Message: "Unauthorized"})
+		return config.JwtKey, nil
+	})
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, models.Response{Code: 401, Message: "Authorization header is err"})
+		return
+	}
+	// if err != nil || !token.Valid {
+	// 	c.JSON(http.StatusUnauthorized, models.Response{Code: 401, Message: "Unauthorized"})
+	// 	return
+	// }
+	utils.DB.Where("id = ?", claims.UserID).First(&user)
+	c.JSON(http.StatusOK, models.Response{Code: 200, Message: "Success", Data: user})
 }

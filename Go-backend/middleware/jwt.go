@@ -2,7 +2,7 @@
  * @Author: Jeffrey Zhu 1624410543@qq.com
  * @Date: 2025-03-14 23:11:18
  * @LastEditors: Jeffrey Zhu 1624410543@qq.com
- * @LastEditTime: 2025-03-15 19:26:28
+ * @LastEditTime: 2025-03-15 23:47:01
  * @FilePath: \Smart-Snap-AI\Go-backend\middleware\jwt.go
  * @Description: File Description Here...
  *
@@ -11,6 +11,7 @@
 package middleware
 
 import (
+	"Go-backend/config"
 	"Go-backend/models"
 	"net/http"
 	"time"
@@ -18,8 +19,6 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
-
-var jwtKey = []byte("your_secret_key")
 
 type Claims struct {
 	UserID uint
@@ -36,13 +35,13 @@ func GenerateJWT(user models.User) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(jwtKey)
+	return token.SignedString(config.JwtKey)
 }
 
 func JWTAuthMiddleware(c *gin.Context) {
 	claims := &Claims{}
 	token, err := jwt.ParseWithClaims(c.GetHeader("Authorization"), claims, func(token *jwt.Token) (interface{}, error) {
-		return jwtKey, nil
+		return config.JwtKey, nil
 	})
 
 	if err != nil || !token.Valid {

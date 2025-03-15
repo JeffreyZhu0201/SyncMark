@@ -25,9 +25,16 @@ func main() {
 	// 设置路由
 	r := gin.Default()
 
-	// 注册路由
-	r.POST("/register", handlers.Register)
-	r.POST("/login", handlers.Login)
+	auth := r.Group("/auth")
+	{
+		auth.POST("/register", handlers.Register)
+		auth.POST("/login", handlers.Login)
+	}
+
+	info := r.Group("/info")
+	{
+		info.GET("/", middleware.JWTAuthMiddleware, handlers.GetUserInfo)
+	}
 
 	r.GET("/", middleware.JWTAuthMiddleware, func(c *gin.Context) {
 		c.JSON(200, gin.H{
