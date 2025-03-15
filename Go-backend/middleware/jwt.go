@@ -2,8 +2,8 @@
  * @Author: Jeffrey Zhu 1624410543@qq.com
  * @Date: 2025-03-14 23:11:18
  * @LastEditors: Jeffrey Zhu 1624410543@qq.com
- * @LastEditTime: 2025-03-14 23:56:50
- * @FilePath: \Smart-Snap-AI\Go-backend\config\jwt.go
+ * @LastEditTime: 2025-03-15 19:26:28
+ * @FilePath: \Smart-Snap-AI\Go-backend\middleware\jwt.go
  * @Description: File Description Here...
  *
  * Copyright (c) 2025 by JeffreyZhu, All Rights Reserved.
@@ -12,9 +12,11 @@ package middleware
 
 import (
 	"Go-backend/models"
+	"net/http"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-gonic/gin"
 )
 
 var jwtKey = []byte("your_secret_key")
@@ -24,7 +26,7 @@ type Claims struct {
 	jwt.StandardClaims
 }
 
-func GenerateJWT(user models.User) (string, error) { // 修改此行
+func GenerateJWT(user models.User) (string, error) {
 	expirationTime := time.Now().Add(24 * time.Hour)
 	claims := &Claims{
 		UserID: user.ID,
@@ -35,4 +37,18 @@ func GenerateJWT(user models.User) (string, error) { // 修改此行
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(jwtKey)
+}
+
+func JWTAuthMiddleware(c *gin.Context) {
+	claims := &Claims{}
+	token, err := jwt.ParseWithClaims(c.GetHeader("Authorization"), claims, func(token *jwt.Token) (interface{}, error) {
+		return jwtKey, nil
+	})
+
+	if err != nil || !token.Valid {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, models.Response{Code: 401, Message: "Unauthorized"})
+		return
+	}
+
+	c.Next()
 }
