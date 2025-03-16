@@ -2,7 +2,7 @@
  * @Author: Jeffrey Zhu 1624410543@qq.com
  * @Date: 2025-03-14 22:20:14
  * @LastEditors: Jeffrey Zhu 1624410543@qq.com
- * @LastEditTime: 2025-03-15 19:14:35
+ * @LastEditTime: 2025-03-16 11:02:05
  * @FilePath: \Smart-Snap-AI\Go-backend\main.go
  * @Description: File Description Here...
  *
@@ -34,6 +34,11 @@ func main() {
 	info := r.Group("/info")
 	{
 		info.GET("/", middleware.JWTAuthMiddleware, handlers.GetUserInfo)
+	}
+
+	aiInterface := r.Group("/ai")
+	{
+		aiInterface.POST("/ocr", middleware.JWTAuthMiddleware, handlers.HandleUploadImg)
 	}
 
 	r.GET("/", middleware.JWTAuthMiddleware, func(c *gin.Context) {
