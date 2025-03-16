@@ -2,10 +2,8 @@ package handlers
 
 import (
 	"Go-backend/models"
-	"bytes"
+	"Go-backend/utils"
 	"encoding/base64"
-	"encoding/json"
-	"io"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -17,24 +15,14 @@ func API_OCR(Base64Image string) (string, error) {
 		"upfile_b64":  Base64Image,
 		"return_text": 1,
 	}
-	//将map转为json格式
-	jsonData, err := json.Marshal(params)
-	if err != nil {
-		return "", err
-	}
-	resp, err := http.Post("https://www.tulingyun.com/api/ocr", "application/json", bytes.NewBuffer(jsonData)) //将json转为字符串
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
 
-	// Read response
-	body, err := io.ReadAll(resp.Body)
+	res, err := utils.FetchPost("https://www.tulingyun.com/api/ocr", params)
+
 	if err != nil {
 		return "", err
 	}
 
-	return string(body), nil
+	return res, nil
 }
 
 func HandleUploadImg(c *gin.Context) {
@@ -65,9 +53,11 @@ func HandleUploadImg(c *gin.Context) {
 
 	// 4. 调用 OCR API
 	ocrResult, err := API_OCR(base64Str)
+
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.Response{Code: 500, Message: "ocr error"})
 		return
 	}
+
 	c.JSON(http.StatusOK, models.Response{Code: 200, Message: "success", Data: ocrResult})
 }
