@@ -2,7 +2,7 @@
  * @Author: Jeffrey Zhu 1624410543@qq.com
  * @Date: 2025-03-14 22:20:14
  * @LastEditors: Jeffrey Zhu 1624410543@qq.com
- * @LastEditTime: 2025-03-16 11:02:05
+ * @LastEditTime: 2025-03-16 11:39:21
  * @FilePath: \Smart-Snap-AI\Go-backend\main.go
  * @Description: File Description Here...
  *
@@ -39,6 +39,7 @@ func main() {
 	aiInterface := r.Group("/ai")
 	{
 		aiInterface.POST("/ocr", middleware.JWTAuthMiddleware, handlers.HandleUploadImg)
+		aiInterface.POST("/deepseek", middleware.JWTAuthMiddleware, handlers.HandleDeepSeek)
 	}
 
 	r.GET("/", middleware.JWTAuthMiddleware, func(c *gin.Context) {
