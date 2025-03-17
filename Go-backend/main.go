@@ -11,8 +11,7 @@
 package main
 
 import (
-	"Go-backend/handlers"
-	"Go-backend/middleware"
+	"Go-backend/routes"
 	"Go-backend/utils"
 	"log"
 
@@ -27,33 +26,12 @@ func main() {
 		log.Fatalf("加载环境变量失败: %v", err)
 	}
 
-	r := gin.Default()
-
 	// 初始化数据库
 	utils.InitDB()
 
-	auth := r.Group("/auth")
-	{
-		auth.POST("/register", handlers.Register)
-		auth.POST("/login", handlers.Login)
-	}
-
-	info := r.Group("/info")
-	{
-		info.GET("/", middleware.JWTAuthMiddleware, handlers.GetUserInfo)
-	}
-
-	aiInterface := r.Group("/ai")
-	{
-		aiInterface.POST("/ocr", middleware.JWTAuthMiddleware, handlers.HandleUploadImg)
-		aiInterface.POST("/deepseek", middleware.JWTAuthMiddleware, handlers.HandleDeepSeek)
-	}
-
-	r.GET("/", middleware.JWTAuthMiddleware, func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "Hello, Gin!",
-		})
-	})
+	// 初始化路由
+	r := gin.Default()
+	routes.SetupRoutes(r)
 
 	// 启动服务器
 	if err := r.Run(); err != nil {

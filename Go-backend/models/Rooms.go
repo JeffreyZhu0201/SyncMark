@@ -1,9 +1,9 @@
 /*
  * @Author: Jeffrey Zhu 1624410543@qq.com
- * @Date: 2025-03-17 22:24:39
+ * @Date: 2025-03-17 23:12:56
  * @LastEditors: Jeffrey Zhu 1624410543@qq.com
- * @LastEditTime: 2025-03-17 22:24:51
- * @FilePath: \SyncMark\Go-backend\models\Annotation.go
+ * @LastEditTime: 2025-03-17 23:14:14
+ * @FilePath: \SyncMark\Go-backend\models\Rooms.go
  * @Description: File Description Here...
  *
  * Copyright (c) 2025 by JeffreyZhu, All Rights Reserved.
@@ -15,9 +15,8 @@ import (
 	"gorm.io/gorm"
 )
 
-type Annotation struct {
+type Room struct {
 	gorm.Model
-	RoomID  uint   `json:"room_id"`
-	UserID  uint   `json:"user_id"`
-	Content string `json:"content"`
+	ID   uint   `json:"id" gorm:"primaryKey"`
+	Name string `json:"name"`
 }
