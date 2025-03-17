@@ -13,8 +13,6 @@
 
 ## 一款团队协同网页批注插件
 
----
-
 [//]: # "Center alignment start"
 
 ![Static Badge](https://img.shields.io/badge/build-passing-brightgreen?style=flat-square)
