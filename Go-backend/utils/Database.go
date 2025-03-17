@@ -24,7 +24,8 @@ func InitDB() *gorm.DB {
 	}
 
 	// 自动迁移数据库表
-	err = DB.AutoMigrate(&models.User{})
+	err = DB.AutoMigrate(&models.User{}, &models.Annotation{}, &models.Room{})
+
 	if err != nil {
 		log.Fatalf("数据库迁移失败: %v", err)
 	}
