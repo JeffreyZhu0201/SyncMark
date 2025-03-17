@@ -15,6 +15,8 @@
 
 ## 支持团队协同浏览器内批注的插件
 
-<center>
+<div align="center">
+
 ![Static Badge](https://img.shields.io/badge/build-passing-brightgreen?style=flat-square)
-</center>
+
+</div>
