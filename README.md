@@ -9,9 +9,9 @@
  * Copyright (c) 2025 by JeffreyZhu, All Rights Reserved. 
 -->
 
-# SyncMark
+# **SyncMark**
 
-## -支持团队协同浏览器内批注的插件
+## 一款团队协同网页批注插件
 
 ---
 
