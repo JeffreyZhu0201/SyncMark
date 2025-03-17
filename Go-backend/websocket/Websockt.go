@@ -1,4 +1,4 @@
-package handlers
+package websocket
 
 import (
 	"net/http"
@@ -7,63 +7,35 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var upgrader = websocket.Upgrader{
-	CheckOrigin: func(r *http.Request) bool {
-		return true
-	},
-}
+var upgrader = websocket.Upgrader{}
+var rooms = make(map[string][]*websocket.Conn)
+var roomsMutex = &sync.Mutex{}
 
-type Client struct {
-	conn *websocket.Conn
-	send chan []byte
-}
-
-var clients = make(map[*Client]bool)
-var mu sync.Mutex
-
-func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
+func HandleWebSocket(w http.ResponseWriter, r *http.Request, roomId string) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		return
 	}
-	client := &Client{conn: conn, send: make(chan []byte)}
-	mu.Lock()
-	clients[client] = true
-	mu.Unlock()
+	defer conn.Close()
 
-	go client.readMessages()
-	go client.writeMessages()
-}
+	roomsMutex.Lock()
+	rooms[roomId] = append(rooms[roomId], conn)
+	roomsMutex.Unlock()
 
-func (c *Client) readMessages() {
-	defer func() {
-		mu.Lock()
-		delete(clients, c)
-		mu.Unlock()
-		c.conn.Close()
-	}()
 	for {
-		_, msg, err := c.conn.ReadMessage()
+		_, message, err := conn.ReadMessage()
 		if err != nil {
 			break
 		}
-		broadcastMessage(msg)
+		BroadcastMessage(roomId, message)
 	}
 }
 
-func (c *Client) writeMessages() {
-	for msg := range c.send {
-		err := c.conn.WriteMessage(websocket.TextMessage, msg)
-		if err != nil {
-			break
-		}
-	}
-}
+func BroadcastMessage(roomId string, message []byte) {
+	roomsMutex.Lock()
+	defer roomsMutex.Unlock()
 
-func broadcastMessage(msg []byte) {
-	mu.Lock()
-	defer mu.Unlock()
-	for client := range clients {
-		client.send <- msg
+	for _, conn := range rooms[roomId] {
+		conn.WriteMessage(websocket.TextMessage, message)
 	}
 }

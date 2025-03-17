@@ -2,7 +2,7 @@
  * @Author: Jeffrey Zhu 1624410543@qq.com
  * @Date: 2025-03-17 23:08:33
  * @LastEditors: Jeffrey Zhu 1624410543@qq.com
- * @LastEditTime: 2025-03-17 23:19:47
+ * @LastEditTime: 2025-03-17 23:39:44
  * @FilePath: \SyncMark\Go-backend\routes\routes.go
  * @Description: File Description Here...
  *
@@ -13,6 +13,7 @@ package routes
 import (
 	"Go-backend/handlers"
 	"Go-backend/middleware"
+	"Go-backend/websocket"
 
 	"github.com/gin-gonic/gin"
 )
@@ -40,5 +41,8 @@ func SetupRoutes(r *gin.Engine) {
 	})
 
 	// WebSocket 路由
-	r.GET("/ws", handlers.HandleWebSocket)
+	r.GET("/ws/:roomId", func(c *gin.Context) {
+		roomId := c.Param("roomId")
+		websocket.HandleWebSocket(c.Writer, c.Request, roomId)
+	})
 }
