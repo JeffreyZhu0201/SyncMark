@@ -12,6 +12,7 @@ var rooms = make(map[string][]*websocket.Conn)
 var roomsMutex = &sync.Mutex{}
 
 func HandleWebSocket(w http.ResponseWriter, r *http.Request, roomId string) {
+
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		return
