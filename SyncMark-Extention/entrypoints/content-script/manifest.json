@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "SyncMark 划词批注",
+  "version": "0.1.0",
+  "description": "网页划词批注插件",
+  "permissions": [
+    "scripting",
+    "activeTab",
+    "storage",
+    "contextMenus"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["annotation.js"],
+      "run_at": "document_end"
+    }
+  ]
+}

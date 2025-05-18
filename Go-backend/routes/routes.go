@@ -54,7 +54,5 @@ func SetupRoutes(r *gin.Engine) {
 	r.GET("/rooms", handlers.GetRooms)
 
 	// 批注路由
-	r.POST("/annotations", handlers.CreateAnnotation)
-	r.DELETE("/annotations/:id", handlers.DeleteAnnotation)
-	r.GET("/annotations/:roomId", handlers.GetAnnotations)
+	RegisterAnnotationRoutes(r)
 }
